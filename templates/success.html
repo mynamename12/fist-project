@@ -1,11 +1,15 @@
 <!DOCTYPE html>
 <html lang="ar">
 <head>
-  <meta charset="UTF-8">
-  <title>نجاح</title>
+  <meta charset="UTF-8" />
+  <title>تم التحليل</title>
 </head>
-<body style="text-align:center; padding: 50px;">
+<body>
   <h2>✅ تم التحليل بنجاح</h2>
-  <p>افتح الواجهة الآن لعرض النتائج</p>
+  <p>الدخل الكلي: {{ result.total_income }} ريال</p>
+  <p>نسبة الخطر: {{ result.danger_percent }}%</p>
+  <p>{{ result.risk_level }}</p>
+  <p>💡 التوصية: {{ result.advice }}</p>
+  <a href="/">العودة</a>
 </body>
 </html>
