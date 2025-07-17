@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template, redirect, jsonify
+from flask import Flask, request, render_template, jsonify
 from flask_cors import CORS
 import pandas as pd
 
@@ -41,13 +41,13 @@ def analyze():
 
     if danger_percent >= 100:
         risk = "🔴 خطر مرتفع"
-        advice = "قلل مصروفاتك فوراً أو أضف مصدر دخل."
+        advice = "أنت تصرف أكثر من دخلك! راجع مصروفاتك فوراً."
     elif danger_percent >= 70:
         risk = "🟠 خطر متوسط"
-        advice = "انتبه، مصروفاتك تقترب من دخلك. حاول التوفير."
+        advice = "مصروفاتك مرتفعة، حاول تقليلها لتفادي الخطر."
     else:
         risk = "🟢 خطر منخفض"
-        advice = "وضعك المالي جيد، استمر في التحكم بالمصاريف."
+        advice = "وضعك المالي مستقر، استمر على هذا النهج."
 
     latest_result = {
         "total_income": round(income, 2),
@@ -61,11 +61,25 @@ def analyze():
 
 @app.route('/latest', methods=['GET'])
 def latest():
-    return jsonify(latest_result if latest_result else {"message": "لا يوجد تحليل بعد"})
+    if not latest_result:
+        return jsonify({"message": "لا يوجد تحليل بعد"})
 
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
-t else {"message": "لا يوجد تحليل بعد"}
+    # تحويل الأرقام لنوع يقبل JSON
+    safe_result = {
+        "total_income": float(latest_result["total_income"]),
+        "category_expenses": [
+            {
+                "category": str(item["category"]),
+                "amount": float(item["amount"])
+            }
+            for item in latest_result["category_expenses"]
+        ],
+        "danger_percent": float(latest_result["danger_percent"]),
+        "risk_level": str(latest_result["risk_level"]),
+        "advice": str(latest_result.get("advice", ""))
+    }
+
+    return jsonify(safe_result)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
