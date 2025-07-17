@@ -36,6 +36,7 @@ def analyze():
 
     category_expenses = expenses.groupby('category')['amount'].sum().reset_index().to_dict(orient='records')
     total_expense = expenses['amount'].sum()
+
     danger_percent = round((total_expense / income) * 100, 2) if income > 0 else 100.0
 
     if danger_percent >= 100:
@@ -45,24 +46,17 @@ def analyze():
     else:
         risk = "🟢 خطر منخفض"
 
-    # التوصية التلقائية بناءً على النسبة
-    advice = ""
-    if danger_percent >= 100:
-        advice = "راجع مصروفاتك فوراً وتوقف عن الإنفاق غير الضروري."
-    elif danger_percent >= 70:
-        advice = "حاول تقليل المصاريف الشهر القادم."
-    else:
-        advice = "أنت على المسار الصحيح، استمر على هذا النمط."
-
     latest_result = {
         "total_income": float(income),
         "category_expenses": [
-            {"category": str(c["category"]), "amount": float(c["amount"])}
-            for c in category_expenses
+            {
+                "category": str(c["category"]),
+                "amount": float(c["amount"])
+            } for c in category_expenses
         ],
         "danger_percent": float(danger_percent),
-        "risk_level": risk,
-        "advice": advice
+        "risk_level": str(risk),
+        "advice": ""
     }
 
     return render_template("success.html", result=latest_result)
