@@ -1,7 +1,6 @@
-from flask import Flask, request, render_template, redirect
+from flask import Flask, request, render_template, redirect, jsonify
 from flask_cors import CORS
 import pandas as pd
-import os
 
 app = Flask(__name__)
 CORS(app)
@@ -42,23 +41,31 @@ def analyze():
 
     if danger_percent >= 100:
         risk = "🔴 خطر مرتفع"
+        advice = "قلل مصروفاتك فوراً أو أضف مصدر دخل."
     elif danger_percent >= 70:
         risk = "🟠 خطر متوسط"
+        advice = "انتبه، مصروفاتك تقترب من دخلك. حاول التوفير."
     else:
         risk = "🟢 خطر منخفض"
+        advice = "وضعك المالي جيد، استمر في التحكم بالمصاريف."
 
     latest_result = {
         "total_income": round(income, 2),
         "category_expenses": category_expenses,
         "danger_percent": danger_percent,
-        "risk_level": risk
+        "risk_level": risk,
+        "advice": advice
     }
 
     return render_template("success.html", result=latest_result)
 
 @app.route('/latest', methods=['GET'])
 def latest():
-    return latest_result if latest_result else {"message": "لا يوجد تحليل بعد"}
+    return jsonify(latest_result if latest_result else {"message": "لا يوجد تحليل بعد"})
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5000)
+t else {"message": "لا يوجد تحليل بعد"}
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
