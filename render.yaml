@@ -1,0 +1,6 @@
+services:
+  - type: web
+    name: transaction-api
+    env: python
+    buildCommand: ""
+    startCommand: "python transaction_api.py"
